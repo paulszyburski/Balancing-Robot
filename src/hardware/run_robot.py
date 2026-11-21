@@ -46,9 +46,9 @@ def main():
                 sys.excepthook = excepthook
             bot.doMove(0, 0)
 
-        deadline = monotonic() + (3 if bot else 15)
+        deadline = None if bot else monotonic() + 15
         next_log = 0.0
-        while monotonic() < deadline:
+        while deadline is None or monotonic() < deadline:
             started = monotonic()
             observation = sensors.observation()
             pitch, pitch_rate, wheel_speed = map(float, observation)
