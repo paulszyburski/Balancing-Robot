@@ -1,0 +1,159 @@
+<?xml version="1.0"?>
+<robot name="balancing_robot">
+  <material name="blue">
+    <color rgba="0.10 0.29 0.52 1"/>
+  </material>
+  <material name="graphite">
+    <color rgba="0.055 0.075 0.105 1"/>
+  </material>
+  <material name="titanium">
+    <color rgba="0.43 0.52 0.62 1"/>
+  </material>
+  <material name="cyan">
+    <color rgba="0.18 0.95 1.0 1"/>
+  </material>
+  <material name="amber">
+    <color rgba="1.0 0.52 0.12 1"/>
+  </material>
+  <material name="rubber">
+    <color rgba="0.12 0.12 0.12 1"/>
+  </material>
+
+  <!-- X is forward, Y runs along the axle, and Z points up. -->
+  <link name="chassis">
+    <inertial>
+      <origin xyz="0 0 0.045"/>
+      <mass value="1.0"/>
+      <inertia ixx="0.002967" ixy="0" ixz="0" iyy="0.002667" iyz="0" izz="0.001367"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0.045"/>
+      <geometry><box size="0.08 0.10 0.16"/></geometry>
+      <material name="blue"/>
+    </visual>
+    <visual name="top_cap">
+      <origin xyz="0 0 0.123"/>
+      <geometry><box size="0.084 0.104 0.009"/></geometry>
+      <material name="graphite"/>
+    </visual>
+    <visual name="lower_trim">
+      <origin xyz="0 0 -0.029"/>
+      <geometry><box size="0.083 0.100 0.011"/></geometry>
+      <material name="graphite"/>
+    </visual>
+    <visual name="visor">
+      <origin xyz="0.041 0 0.092"/>
+      <geometry><box size="0.008 0.086 0.035"/></geometry>
+      <material name="graphite"/>
+    </visual>
+    <visual name="left_status_light">
+      <origin xyz="0.0455 0.023 0.092"/>
+      <geometry><box size="0.002 0.026 0.007"/></geometry>
+      <material name="cyan"/>
+    </visual>
+    <visual name="right_status_light">
+      <origin xyz="0.0455 -0.023 0.092"/>
+      <geometry><box size="0.002 0.026 0.007"/></geometry>
+      <material name="cyan"/>
+    </visual>
+    <visual name="front_lower_panel">
+      <origin xyz="0.041 0 0.036"/>
+      <geometry><box size="0.004 0.055 0.044"/></geometry>
+      <material name="graphite"/>
+    </visual>
+    <visual name="front_upper_fin">
+      <origin xyz="0.044 0 0.048"/>
+      <geometry><box size="0.004 0.041 0.003"/></geometry>
+      <material name="titanium"/>
+    </visual>
+    <visual name="front_middle_fin">
+      <origin xyz="0.044 0 0.036"/>
+      <geometry><box size="0.004 0.041 0.003"/></geometry>
+      <material name="titanium"/>
+    </visual>
+    <visual name="front_lower_fin">
+      <origin xyz="0.044 0 0.024"/>
+      <geometry><box size="0.004 0.041 0.003"/></geometry>
+      <material name="titanium"/>
+    </visual>
+    <visual name="left_side_panel">
+      <origin xyz="0 0.0505 0.077"/>
+      <geometry><box size="0.062 0.004 0.068"/></geometry>
+      <material name="graphite"/>
+    </visual>
+    <visual name="right_side_panel">
+      <origin xyz="0 -0.0505 0.077"/>
+      <geometry><box size="0.062 0.004 0.068"/></geometry>
+      <material name="graphite"/>
+    </visual>
+    <visual name="left_accent">
+      <origin xyz="0 0.053 0.087" rpy="0 -0.35 0"/>
+      <geometry><box size="0.051 0.002 0.006"/></geometry>
+      <material name="amber"/>
+    </visual>
+    <visual name="right_accent">
+      <origin xyz="0 -0.053 0.087" rpy="0 -0.35 0"/>
+      <geometry><box size="0.051 0.002 0.006"/></geometry>
+      <material name="amber"/>
+    </visual>
+    <visual name="rear_cover">
+      <origin xyz="-0.041 0 0.062"/>
+      <geometry><box size="0.006 0.072 0.079"/></geometry>
+      <material name="graphite"/>
+    </visual>
+    <visual name="rear_status_strip">
+      <origin xyz="-0.0445 0 0.084"/>
+      <geometry><box size="0.002 0.046 0.005"/></geometry>
+      <material name="amber"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0.045"/>
+      <geometry><box size="0.08 0.10 0.16"/></geometry>
+    </collision>
+  </link>
+
+  <link name="left_wheel">
+    <inertial>
+      <mass value="0.1"/>
+      <inertia ixx="0.0000673" ixy="0" ixz="0" iyy="0.000125" iyz="0" izz="0.0000673"/>
+    </inertial>
+    <visual>
+      <origin rpy="1.57079632679 0 0"/>
+      <geometry><mesh filename="wheel.obj"/></geometry>
+      <material name="rubber"/>
+    </visual>
+    <collision>
+      <origin rpy="1.57079632679 0 0"/>
+      <geometry><cylinder radius="0.05" length="0.024"/></geometry>
+    </collision>
+  </link>
+
+  <link name="right_wheel">
+    <inertial>
+      <mass value="0.1"/>
+      <inertia ixx="0.0000673" ixy="0" ixz="0" iyy="0.000125" iyz="0" izz="0.0000673"/>
+    </inertial>
+    <visual>
+      <origin rpy="1.57079632679 0 0"/>
+      <geometry><mesh filename="wheel.obj"/></geometry>
+      <material name="rubber"/>
+    </visual>
+    <collision>
+      <origin rpy="1.57079632679 0 0"/>
+      <geometry><cylinder radius="0.05" length="0.024"/></geometry>
+    </collision>
+  </link>
+
+  <joint name="left_wheel_joint" type="continuous">
+    <origin xyz="0 0.064 0"/>
+    <parent link="chassis"/>
+    <child link="left_wheel"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+  <joint name="right_wheel_joint" type="continuous">
+    <origin xyz="0 -0.064 0"/>
+    <parent link="chassis"/>
+    <child link="right_wheel"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+</robot>
