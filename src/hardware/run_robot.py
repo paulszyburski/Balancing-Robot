@@ -13,11 +13,14 @@ def main():
     parser.add_argument("--port", help="mCore serial port. Omit to log predictions only.")
     parser.add_argument("--max-command", type=int, choices=range(1, 256), metavar="1-255")
     parser.add_argument("--motor-sign", type=int, choices=(-1, 1), default=1)
+    parser.add_argument("--tilt-limit", type=float, default=35, help="Powered tilt cutoff in degrees (default: 35).")
     args = parser.parse_args()
     if args.counts_per_revolution <= 0:
         parser.error("counts_per_revolution must be positive")
     if bool(args.port) != bool(args.max_command):
         parser.error("provide --port and --max-command together to enable motors")
+    if not 0 < args.tilt_limit <= 60:
+        parser.error("--tilt-limit must be greater than 0 and at most 60 degrees")
 
     from stable_baselines3 import PPO
 
@@ -54,7 +57,7 @@ def main():
             pitch, pitch_rate, wheel_speed = map(float, observation)
             if not all(map(isfinite, observation)):
                 raise RuntimeError("Invalid sensor reading")
-            if bot and abs(degrees(pitch)) > 20:
+            if bot and abs(degrees(pitch)) > args.tilt_limit:
                 print("Tilt limit reached.")
                 break
 
