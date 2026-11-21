@@ -15,7 +15,7 @@ class Enviroment(gym.Env):
         self.steps = 0
 
         self.action_space = gym.spaces.Box(-1.0, 1.0, shape=(1,), dtype=np.float32)
-        self.observation_space = gym.spaces.Box(-np.inf, np.inf, shape=(4,), dtype=np.float32)
+        self.observation_space = gym.spaces.Box(-np.inf, np.inf, shape=(6,), dtype=np.float32)
 
         p.setTimeStep(self.dt, physicsClientId=self.client)
         p.setAdditionalSearchPath(pybullet_data.getDataPath(), physicsClientId=self.client)
@@ -71,7 +71,8 @@ class Enviroment(gym.Env):
 
         self.steps += 1
         observation = self._observation()
-        pitch, _, x, _ = observation
+        pitch = observation[0]
+        x = observation[2]
 
         fell = abs(pitch) > 1.2
         timed_out = self.steps >= 600
@@ -83,9 +84,15 @@ class Enviroment(gym.Env):
         client = self.client
         position, orientation = p.getBasePositionAndOrientation(self.robot, physicsClientId=client)
         linear, angular = p.getBaseVelocity(self.robot, physicsClientId=client)
+        left_wheel, right_wheel = p.getJointStates(
+            self.robot, self.controller.wheel_joints, physicsClientId=client
+        )
 
         pitch = p.getEulerFromQuaternion(orientation)[1]
-        return np.array([pitch, angular[1], position[0], linear[0]], dtype=np.float32)
+        return np.array(
+            [pitch, angular[1], position[0], linear[0], left_wheel[1], right_wheel[1]],
+            dtype=np.float32,
+        )
 
     def close(self):
         if p.isConnected(self.client):
