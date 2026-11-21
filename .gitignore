@@ -15,6 +15,9 @@ downloads/
 eggs/
 .eggs/
 lib/
+!/src/hardware/lib/
+/src/hardware/lib/*
+!/src/hardware/lib/mbot.py
 lib64/
 parts/
 sdist/
