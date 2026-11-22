@@ -27,11 +27,16 @@ def main():
             time.sleep(0.5)
             while p.isConnected(env.client):
                 action, _ = model.predict(observation, deterministic=True)
-                observation, _, fell, timed_out, _ = env.step(action)
+                observation, _, terminated, timed_out, info = env.step(action)
                 time.sleep(4 * env.dt)
-                if fell or timed_out:
+                if terminated or timed_out:
                     seconds = env.steps * 4 * env.dt
-                    result = "Fell" if fell else "Reached the time limit"
+                    if info["fell"]:
+                        result = "Fell"
+                    elif info["drifted"]:
+                        result = "Drove outside the balance area"
+                    else:
+                        result = "Reached the time limit"
                     print(f"{result} after {seconds:.2f} simulated seconds.")
                     time.sleep(1)
                     break

@@ -25,7 +25,7 @@ class Enviroment(gym.Env):
         model = Path(__file__).resolve().parents[2] / "models" / "balancing_robot.urdf"
         self.robot = p.loadURDF(
             str(model),
-            basePosition=[0, 0, 0.051],
+            basePosition=[0, 0, 0.031],
             flags=p.URDF_USE_INERTIA_FROM_FILE,
             physicsClientId=self.client,
         )
@@ -42,7 +42,7 @@ class Enviroment(gym.Env):
         p.restoreState(self.initial_state, physicsClientId=client)
         position, _ = p.getBasePositionAndOrientation(self.robot, physicsClientId=client)
 
-        tilt_degrees = self.np_random.uniform(2.0, 55.0)
+        tilt_degrees = self.np_random.uniform(2.0, 15.0)
         tilt_degrees *= self.np_random.choice([-1, 1])
         orientation = p.getQuaternionFromEuler([0, np.deg2rad(tilt_degrees), 0])
 
@@ -66,20 +66,37 @@ class Enviroment(gym.Env):
         speed = 10.0 * float(action[0])
         self.controller.drive(speed)
 
+        chassis_hit_floor = False
         for _ in range(4):
             p.stepSimulation(physicsClientId=self.client)
+            if p.getContactPoints(self.robot, self.floor, linkIndexA=-1, physicsClientId=self.client):
+                chassis_hit_floor = True
+                break
 
         self.steps += 1
         position, orientation = p.getBasePositionAndOrientation(self.robot, physicsClientId=self.client)
         observation = self._observation(orientation)
-        pitch = observation[0]
-        x = position[0]
+        pitch, pitch_rate, _ = observation
+        axle_offset = p.rotateVector(orientation, self.center_of_mass_offset)
+        axle_x = position[0] - axle_offset[0]
+        linear_velocity, _ = p.getBaseVelocity(self.robot, physicsClientId=self.client)
+        forward_speed = linear_velocity[0]
 
-        fell = abs(pitch) > 1.2
-        timed_out = self.steps >= 600
-        reward = -1.0 if fell else 1.0 - abs(pitch) - 0.5 * abs(x)
+        fell = chassis_hit_floor or abs(pitch) > np.deg2rad(35.0)
+        drifted = abs(axle_x) > 0.25
+        terminated = bool(fell or drifted)
+        timed_out = self.steps >= 600 and not terminated
+        balance_reward = (
+            1.0
+            - abs(pitch)
+            - 0.03 * abs(pitch_rate)
+            - 2.0 * abs(axle_x)
+            - 0.25 * abs(forward_speed)
+        )
+        reward = -1.0 if terminated else balance_reward
+        info = {"fell": bool(fell), "drifted": bool(drifted)}
 
-        return observation, float(reward), bool(fell), timed_out, {}
+        return observation, float(reward), terminated, timed_out, info
 
     def _observation(self, orientation):
         client = self.client

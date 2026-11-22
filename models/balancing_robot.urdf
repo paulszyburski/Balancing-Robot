@@ -1,157 +1,185 @@
 <?xml version="1.0"?>
 <robot name="balancing_robot">
-  <material name="blue">
-    <color rgba="0.10 0.29 0.52 1"/>
-  </material>
-  <material name="graphite">
-    <color rgba="0.055 0.075 0.105 1"/>
-  </material>
-  <material name="titanium">
-    <color rgba="0.43 0.52 0.62 1"/>
-  </material>
-  <material name="cyan">
-    <color rgba="0.18 0.95 1.0 1"/>
-  </material>
-  <material name="amber">
-    <color rgba="1.0 0.52 0.12 1"/>
-  </material>
-  <material name="rubber">
-    <color rgba="0.12 0.12 0.12 1"/>
-  </material>
+  <!-- X = forward; Y = wheel axle; Z = upward. Units are SI (metres, kg). -->
+  <!-- Wheel axle approximates the shaft hole centres in the original STL:
+       original STL coordinates x=+3.5mm, z=29.85mm, y=+-58.2mm. -->
 
-  <!-- X is forward, Y runs along the axle, and Z points up. -->
+  <material name="blue"><color rgba="0.10 0.29 0.52 1"/></material>
+  <material name="graphite"><color rgba="0.055 0.075 0.105 1"/></material>
+  <material name="titanium"><color rgba="0.43 0.52 0.62 1"/></material>
+  <material name="cyan"><color rgba="0.18 0.95 1.0 1"/></material>
+  <material name="amber"><color rgba="1.0 0.52 0.12 1"/></material>
+  <material name="rubber"><color rgba="0.12 0.12 0.12 1"/></material>
+  <material name="pcb_green"><color rgba="0.04 0.44 0.25 1"/></material>
+  <material name="pcb_blue"><color rgba="0.08 0.42 0.79 1"/></material>
+
   <link name="chassis">
+    <!-- Estimated chassis mass properties with swapped boards and four 23 g AA cells.
+         Board masses are estimated at 46 g (Pi) and 45 g (mCore). -->
     <inertial>
-      <origin xyz="0 0 0.045"/>
-      <mass value="1.0"/>
-      <inertia ixx="0.002967" ixy="0" ixz="0" iyy="0.002667" iyz="0" izz="0.001367"/>
+      <origin xyz="0.00819 0 0.02216"/>
+      <mass value="0.382"/>
+      <inertia ixx="0.00049271" ixy="0" ixz="0" iyy="0.00132800" iyz="0" izz="0.00158659"/>
     </inertial>
-    <visual>
-      <origin xyz="0 0 0.045"/>
-      <geometry><box size="0.08 0.10 0.16"/></geometry>
+
+    <!-- SELF-CONTAINED U-SHAPED CHASSIS. The STL is NOT required.
+         Base plate above the axle, two walls extending downward. -->
+    <visual name="main_platform">
+      <origin xyz="-0.0035 0 0.02830"/>
+      <geometry><box size="0.196 0.120 0.0031"/></geometry>
       <material name="blue"/>
     </visual>
-    <visual name="top_cap">
-      <origin xyz="0 0 0.123"/>
-      <geometry><box size="0.084 0.104 0.009"/></geometry>
+    <visual name="left_motor_mount_wall">
+      <origin xyz="-0.0205 0.0582 0.00575"/>
+      <geometry><box size="0.076 0.0036 0.042"/></geometry>
+      <material name="blue"/>
+    </visual>
+    <visual name="right_motor_mount_wall">
+      <origin xyz="-0.0205 -0.0582 0.00575"/>
+      <geometry><box size="0.076 0.0036 0.042"/></geometry>
+      <material name="blue"/>
+    </visual>
+
+    <!-- PI 4 BLOCK: 85 x 56 mm footprint, on top of the horizontal plate. -->
+    <visual name="raspberry_pi_4">
+      <origin xyz="0.047 0 0.03385"/>
+      <geometry><box size="0.085 0.056 0.008"/></geometry>
+      <material name="pcb_green"/>
+    </visual>
+    <visual name="pi_processor">
+      <origin xyz="0.046 0 0.03985"/>
+      <geometry><box size="0.019 0.019 0.004"/></geometry>
       <material name="graphite"/>
     </visual>
-    <visual name="lower_trim">
-      <origin xyz="0 0 -0.029"/>
-      <geometry><box size="0.083 0.100 0.011"/></geometry>
+
+    <!-- mBOT mCORE BLOCK: about 90 x 79 mm, adjacent to the Pi. -->
+    <visual name="mbot_mcore">
+      <origin xyz="-0.052 0 0.03985"/>
+      <geometry><box size="0.090 0.079 0.020"/></geometry>
+      <material name="pcb_blue"/>
+    </visual>
+    <visual name="mcore_central_chip">
+      <origin xyz="-0.052 0 0.05185"/>
+      <geometry><box size="0.026 0.025 0.004"/></geometry>
       <material name="graphite"/>
     </visual>
-    <visual name="visor">
-      <origin xyz="0.041 0 0.092"/>
-      <geometry><box size="0.008 0.086 0.035"/></geometry>
-      <material name="graphite"/>
-    </visual>
-    <visual name="left_status_light">
-      <origin xyz="0.0455 0.023 0.092"/>
-      <geometry><box size="0.002 0.026 0.007"/></geometry>
-      <material name="cyan"/>
-    </visual>
-    <visual name="right_status_light">
-      <origin xyz="0.0455 -0.023 0.092"/>
-      <geometry><box size="0.002 0.026 0.007"/></geometry>
-      <material name="cyan"/>
-    </visual>
-    <visual name="front_lower_panel">
-      <origin xyz="0.041 0 0.036"/>
-      <geometry><box size="0.004 0.055 0.044"/></geometry>
-      <material name="graphite"/>
-    </visual>
-    <visual name="front_upper_fin">
-      <origin xyz="0.044 0 0.048"/>
-      <geometry><box size="0.004 0.041 0.003"/></geometry>
-      <material name="titanium"/>
-    </visual>
-    <visual name="front_middle_fin">
-      <origin xyz="0.044 0 0.036"/>
-      <geometry><box size="0.004 0.041 0.003"/></geometry>
-      <material name="titanium"/>
-    </visual>
-    <visual name="front_lower_fin">
-      <origin xyz="0.044 0 0.024"/>
-      <geometry><box size="0.004 0.041 0.003"/></geometry>
-      <material name="titanium"/>
-    </visual>
-    <visual name="left_side_panel">
-      <origin xyz="0 0.0505 0.077"/>
-      <geometry><box size="0.062 0.004 0.068"/></geometry>
-      <material name="graphite"/>
-    </visual>
-    <visual name="right_side_panel">
-      <origin xyz="0 -0.0505 0.077"/>
-      <geometry><box size="0.062 0.004 0.068"/></geometry>
-      <material name="graphite"/>
-    </visual>
-    <visual name="left_accent">
-      <origin xyz="0 0.053 0.087" rpy="0 -0.35 0"/>
-      <geometry><box size="0.051 0.002 0.006"/></geometry>
+
+    <!-- Four AA cells under the front of the platform, aligned along X. -->
+    <visual name="aa_cell_1">
+      <origin xyz="0.055 -0.024 0.0195" rpy="0 1.57079632679 0"/>
+      <geometry><cylinder radius="0.00725" length="0.0505"/></geometry>
       <material name="amber"/>
     </visual>
-    <visual name="right_accent">
-      <origin xyz="0 -0.053 0.087" rpy="0 -0.35 0"/>
-      <geometry><box size="0.051 0.002 0.006"/></geometry>
+    <visual name="aa_cell_2">
+      <origin xyz="0.055 -0.008 0.0195" rpy="0 1.57079632679 0"/>
+      <geometry><cylinder radius="0.00725" length="0.0505"/></geometry>
       <material name="amber"/>
     </visual>
-    <visual name="rear_cover">
-      <origin xyz="-0.041 0 0.062"/>
-      <geometry><box size="0.006 0.072 0.079"/></geometry>
-      <material name="graphite"/>
-    </visual>
-    <visual name="rear_status_strip">
-      <origin xyz="-0.0445 0 0.084"/>
-      <geometry><box size="0.002 0.046 0.005"/></geometry>
+    <visual name="aa_cell_3">
+      <origin xyz="0.055 0.008 0.0195" rpy="0 1.57079632679 0"/>
+      <geometry><cylinder radius="0.00725" length="0.0505"/></geometry>
       <material name="amber"/>
     </visual>
-    <collision>
-      <origin xyz="0 0 0.045"/>
-      <geometry><box size="0.08 0.10 0.16"/></geometry>
+    <visual name="aa_cell_4">
+      <origin xyz="0.055 0.024 0.0195" rpy="0 1.57079632679 0"/>
+      <geometry><cylinder radius="0.00725" length="0.0505"/></geometry>
+      <material name="amber"/>
+    </visual>
+
+    <!-- TWO COMPACT YELLOW TT MOTOR HOUSINGS ON THE INSIDE OF THE WALLS. -->
+    <visual name="left_tt_motor">
+      <origin xyz="-0.026 0.045 0"/>
+      <geometry><box size="0.054 0.019 0.026"/></geometry>
+      <material name="amber"/>
+    </visual>
+    <visual name="right_tt_motor">
+      <origin xyz="-0.026 -0.045 0"/>
+      <geometry><box size="0.054 0.019 0.026"/></geometry>
+      <material name="amber"/>
+    </visual>
+    <visual name="left_tt_gearbox">
+      <origin xyz="-0.006 0.045 0"/>
+      <geometry><box size="0.014 0.020 0.029"/></geometry>
+      <material name="titanium"/>
+    </visual>
+    <visual name="right_tt_gearbox">
+      <origin xyz="-0.006 -0.045 0"/>
+      <geometry><box size="0.014 0.020 0.029"/></geometry>
+      <material name="titanium"/>
+    </visual>
+
+    <!-- Simplified compound collision geometry (NOT a concave dynamic STL collision).
+         Boxes approximate the base slab, walls, and battery pack. -->
+    <collision name="aa_pack_collision">
+      <origin xyz="0.055 0 0.0195"/>
+      <geometry><box size="0.0505 0.0625 0.0145"/></geometry>
+    </collision>
+    <collision name="platform_collision">
+      <origin xyz="-0.0035 0 0.02830"/>
+      <geometry><box size="0.196 0.120 0.0031"/></geometry>
+    </collision>
+    <collision name="left_wall_collision">
+      <origin xyz="-0.0205 0.0582 0.00575"/>
+      <geometry><box size="0.076 0.0036 0.042"/></geometry>
+    </collision>
+    <collision name="right_wall_collision">
+      <origin xyz="-0.0205 -0.0582 0.00575"/>
+      <geometry><box size="0.076 0.0036 0.042"/></geometry>
     </collision>
   </link>
 
+  <!-- Tires are 60 mm in diameter and 21.6 mm wide. -->
   <link name="left_wheel">
     <inertial>
       <mass value="0.1"/>
-      <inertia ixx="0.0000673" ixy="0" ixz="0" iyy="0.000125" iyz="0" izz="0.0000673"/>
+      <inertia ixx="0.00002639" ixy="0" ixz="0" iyy="0.000045" iyz="0" izz="0.00002639"/>
     </inertial>
-    <visual>
+    <visual name="tire">
       <origin rpy="1.57079632679 0 0"/>
-      <geometry><mesh filename="wheel.obj"/></geometry>
+      <geometry><mesh filename="wheel.obj" scale="0.6 0.6 0.9"/></geometry>
       <material name="rubber"/>
+    </visual>
+    <visual name="hub">
+      <origin rpy="1.57079632679 0 0"/>
+      <geometry><cylinder radius="0.0108" length="0.02205"/></geometry>
+      <material name="titanium"/>
     </visual>
     <collision>
       <origin rpy="1.57079632679 0 0"/>
-      <geometry><cylinder radius="0.05" length="0.024"/></geometry>
+      <geometry><cylinder radius="0.03" length="0.0216"/></geometry>
     </collision>
   </link>
 
   <link name="right_wheel">
     <inertial>
       <mass value="0.1"/>
-      <inertia ixx="0.0000673" ixy="0" ixz="0" iyy="0.000125" iyz="0" izz="0.0000673"/>
+      <inertia ixx="0.00002639" ixy="0" ixz="0" iyy="0.000045" iyz="0" izz="0.00002639"/>
     </inertial>
-    <visual>
+    <visual name="tire">
       <origin rpy="1.57079632679 0 0"/>
-      <geometry><mesh filename="wheel.obj"/></geometry>
+      <geometry><mesh filename="wheel.obj" scale="0.6 0.6 0.9"/></geometry>
       <material name="rubber"/>
+    </visual>
+    <visual name="hub">
+      <origin rpy="1.57079632679 0 0"/>
+      <geometry><cylinder radius="0.0108" length="0.02205"/></geometry>
+      <material name="titanium"/>
     </visual>
     <collision>
       <origin rpy="1.57079632679 0 0"/>
-      <geometry><cylinder radius="0.05" length="0.024"/></geometry>
+      <geometry><cylinder radius="0.03" length="0.0216"/></geometry>
     </collision>
   </link>
 
+  <!-- Same joint names and order as your existing URDF. -->
   <joint name="left_wheel_joint" type="continuous">
-    <origin xyz="0 0.064 0"/>
+    <origin xyz="0 0.072 0"/>
     <parent link="chassis"/>
     <child link="left_wheel"/>
     <axis xyz="0 1 0"/>
   </joint>
   <joint name="right_wheel_joint" type="continuous">
-    <origin xyz="0 -0.064 0"/>
+    <origin xyz="0 -0.072 0"/>
     <parent link="chassis"/>
     <child link="right_wheel"/>
     <axis xyz="0 1 0"/>

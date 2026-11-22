@@ -14,7 +14,7 @@ def main():
         p.loadURDF("plane.urdf", physicsClientId=client)
         p.loadURDF(
             str(model),
-            basePosition=[0, 0, 0.051],
+            basePosition=[0, 0, 0.031],
             useFixedBase=True,
             physicsClientId=client,
         )
