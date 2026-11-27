@@ -1,187 +1,420 @@
-<?xml version="1.0"?>
-<robot name="balancing_robot">
-  <!-- X = forward; Y = wheel axle; Z = upward. Units are SI (metres, kg). -->
-  <!-- Wheel axle approximates the shaft hole centres in the original STL:
-       original STL coordinates x=+3.5mm, z=29.85mm, y=+-58.2mm. -->
-
-  <material name="blue"><color rgba="0.10 0.29 0.52 1"/></material>
-  <material name="graphite"><color rgba="0.055 0.075 0.105 1"/></material>
-  <material name="titanium"><color rgba="0.43 0.52 0.62 1"/></material>
-  <material name="cyan"><color rgba="0.18 0.95 1.0 1"/></material>
-  <material name="amber"><color rgba="1.0 0.52 0.12 1"/></material>
-  <material name="rubber"><color rgba="0.12 0.12 0.12 1"/></material>
-  <material name="pcb_green"><color rgba="0.04 0.44 0.25 1"/></material>
-  <material name="pcb_blue"><color rgba="0.08 0.42 0.79 1"/></material>
-
+<?xml version="1.0" ?>
+<robot name="balancing_robot_v12_stl_weighted">
+  <material name="chassis_blue">
+    <color rgba="0.16 0.45 0.78 1"/>
+  </material>
+  <material name="upper_blue">
+    <color rgba="0.27 0.65 0.92 1"/>
+  </material>
+  <material name="cover_blue">
+    <color rgba="0.49 0.76 0.86 1"/>
+  </material>
+  <material name="cradle_sand">
+    <color rgba="0.79 0.67 0.37 1"/>
+  </material>
+  <material name="pi_green">
+    <color rgba="0.05 0.49 0.23 1"/>
+  </material>
+  <material name="mcore_blue">
+    <color rgba="0.06 0.30 0.77 1"/>
+  </material>
+  <material name="mpu_cyan">
+    <color rgba="0.07 0.70 0.83 1"/>
+  </material>
+  <material name="aa_black">
+    <color rgba="0.14 0.15 0.18 1"/>
+  </material>
+  <material name="powerbank_black">
+    <color rgba="0.13 0.13 0.17 1"/>
+  </material>
+  <material name="tt_yellow">
+    <color rgba="0.93 0.68 0.08 1"/>
+  </material>
+  <material name="wheel_black">
+    <color rgba="0.08 0.085 0.10 1"/>
+  </material>
+  <material name="cable_grey">
+    <color rgba="0.36 0.37 0.40 1"/>
+  </material>
   <link name="chassis">
-    <!-- Estimated chassis mass properties with swapped boards and four 23 g AA cells.
-         Board masses are estimated at 46 g (Pi) and 45 g (mCore). -->
     <inertial>
-      <origin xyz="0.00819 0 0.02216"/>
-      <mass value="0.382"/>
-      <inertia ixx="0.00049271" ixy="0" ixz="0" iyy="0.00132800" iyz="0" izz="0.00158659"/>
+      <origin xyz="1.34274673e-05 -4.31444465e-12 0.0304160487" rpy="0 0 0"/>
+      <mass value="0.106395932"/>
+      <inertia ixx="0.00016612616218" ixy="4.10780345415e-14" ixz="1.20337599025e-08" iyy="0.000122442398391" iyz="4.05513702176e-15" izz="0.00025238717443"/>
     </inertial>
-
-    <!-- SELF-CONTAINED U-SHAPED CHASSIS. The STL is NOT required.
-         Base plate above the axle, two walls extending downward. -->
-    <visual name="main_platform">
-      <origin xyz="-0.0035 0 0.02830"/>
-      <geometry><box size="0.196 0.120 0.0031"/></geometry>
-      <material name="blue"/>
+    <visual>
+      <origin xyz="0 0 0.042" rpy="3.14159265 0 0"/>
+      <geometry>
+        <mesh filename="V12_Lower_M3_mCore_Compact_Motor_Walls.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="chassis_blue"/>
     </visual>
-    <visual name="left_motor_mount_wall">
-      <origin xyz="-0.0205 0.0582 0.00575"/>
-      <geometry><box size="0.076 0.0036 0.042"/></geometry>
-      <material name="blue"/>
-    </visual>
-    <visual name="right_motor_mount_wall">
-      <origin xyz="-0.0205 -0.0582 0.00575"/>
-      <geometry><box size="0.076 0.0036 0.042"/></geometry>
-      <material name="blue"/>
-    </visual>
-
-    <!-- PI 4 BLOCK: 85 x 56 mm footprint, on top of the horizontal plate. -->
-    <visual name="raspberry_pi_4">
-      <origin xyz="0.047 0 0.03385"/>
-      <geometry><box size="0.085 0.056 0.008"/></geometry>
-      <material name="pcb_green"/>
-    </visual>
-    <visual name="pi_processor">
-      <origin xyz="0.046 0 0.03985"/>
-      <geometry><box size="0.019 0.019 0.004"/></geometry>
-      <material name="graphite"/>
-    </visual>
-
-    <!-- mBOT mCORE BLOCK: about 90 x 79 mm, adjacent to the Pi. -->
-    <visual name="mbot_mcore">
-      <origin xyz="-0.052 0 0.03985"/>
-      <geometry><box size="0.090 0.079 0.020"/></geometry>
-      <material name="pcb_blue"/>
-    </visual>
-    <visual name="mcore_central_chip">
-      <origin xyz="-0.052 0 0.05185"/>
-      <geometry><box size="0.026 0.025 0.004"/></geometry>
-      <material name="graphite"/>
-    </visual>
-
-    <!-- Four AA cells under the front of the platform, aligned along X. -->
-    <visual name="aa_cell_1">
-      <origin xyz="0.055 -0.024 0.0195" rpy="0 1.57079632679 0"/>
-      <geometry><cylinder radius="0.00725" length="0.0505"/></geometry>
-      <material name="amber"/>
-    </visual>
-    <visual name="aa_cell_2">
-      <origin xyz="0.055 -0.008 0.0195" rpy="0 1.57079632679 0"/>
-      <geometry><cylinder radius="0.00725" length="0.0505"/></geometry>
-      <material name="amber"/>
-    </visual>
-    <visual name="aa_cell_3">
-      <origin xyz="0.055 0.008 0.0195" rpy="0 1.57079632679 0"/>
-      <geometry><cylinder radius="0.00725" length="0.0505"/></geometry>
-      <material name="amber"/>
-    </visual>
-    <visual name="aa_cell_4">
-      <origin xyz="0.055 0.024 0.0195" rpy="0 1.57079632679 0"/>
-      <geometry><cylinder radius="0.00725" length="0.0505"/></geometry>
-      <material name="amber"/>
-    </visual>
-
-    <!-- TWO COMPACT YELLOW TT MOTOR HOUSINGS ON THE INSIDE OF THE WALLS. -->
-    <visual name="left_tt_motor">
-      <origin xyz="-0.026 0.045 0"/>
-      <geometry><box size="0.054 0.019 0.026"/></geometry>
-      <material name="amber"/>
-    </visual>
-    <visual name="right_tt_motor">
-      <origin xyz="-0.026 -0.045 0"/>
-      <geometry><box size="0.054 0.019 0.026"/></geometry>
-      <material name="amber"/>
-    </visual>
-    <visual name="left_tt_gearbox">
-      <origin xyz="-0.006 0.045 0"/>
-      <geometry><box size="0.014 0.020 0.029"/></geometry>
-      <material name="titanium"/>
-    </visual>
-    <visual name="right_tt_gearbox">
-      <origin xyz="-0.006 -0.045 0"/>
-      <geometry><box size="0.014 0.020 0.029"/></geometry>
-      <material name="titanium"/>
-    </visual>
-
-    <!-- Simplified compound collision geometry (NOT a concave dynamic STL collision).
-         Boxes approximate the base slab, walls, and battery pack. -->
-    <collision name="aa_pack_collision">
-      <origin xyz="0.055 0 0.0195"/>
-      <geometry><box size="0.0505 0.0625 0.0145"/></geometry>
+    <collision>
+      <origin xyz="0 0 0.03925" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.122 0.104 0.0055"/>
+      </geometry>
     </collision>
-    <collision name="platform_collision">
-      <origin xyz="-0.0035 0 0.02830"/>
-      <geometry><box size="0.196 0.120 0.0031"/></geometry>
+    <collision>
+      <origin xyz="0 0.05375 0.01725" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.054 0.0055 0.0385"/>
+      </geometry>
     </collision>
-    <collision name="left_wall_collision">
-      <origin xyz="-0.0205 0.0582 0.00575"/>
-      <geometry><box size="0.076 0.0036 0.042"/></geometry>
+    <collision>
+      <origin xyz="0 -0.05375 0.01725" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.054 0.0055 0.0385"/>
+      </geometry>
     </collision>
-    <collision name="right_wall_collision">
-      <origin xyz="-0.0205 -0.0582 0.00575"/>
-      <geometry><box size="0.076 0.0036 0.042"/></geometry>
+    <collision>
+      <origin xyz="-0.007 0.0375 0.0265" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.072 0.003 0.02"/>
+      </geometry>
+    </collision>
+    <collision>
+      <origin xyz="-0.007 -0.0375 0.0265" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.072 0.003 0.02"/>
+      </geometry>
+    </collision>
+    <collision>
+      <origin xyz="0.0275 0 0.0265" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.003 0.078 0.02"/>
+      </geometry>
     </collision>
   </link>
-
-  <!-- Tires are 60 mm in diameter and 21.6 mm wide. -->
+  <link name="upper_deck">
+    <inertial>
+      <origin xyz="-0.00117529397 -1.63109189e-11 0.0667863561" rpy="0 0 0"/>
+      <mass value="0.0508597458"/>
+      <inertia ixx="3.07240740549e-05" ixy="-2.08002570556e-15" ixz="1.8669714045e-07" iyy="7.77741499737e-05" iyz="-2.76864318174e-15" izz="0.000105591642619"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0.071" rpy="3.14159265 0 0"/>
+      <geometry>
+        <mesh filename="V12_Upper_Pi_MPU_Short_24mm_Pillars.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="upper_blue"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0.0685" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.128 0.078 0.005"/>
+      </geometry>
+    </collision>
+    <collision>
+      <origin xyz="-0.054 -0.0315 0.054" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.00475" length="0.024"/>
+      </geometry>
+    </collision>
+    <collision>
+      <origin xyz="-0.054 0.0315 0.054" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.00475" length="0.024"/>
+      </geometry>
+    </collision>
+    <collision>
+      <origin xyz="0.054 -0.0315 0.054" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.00475" length="0.024"/>
+      </geometry>
+    </collision>
+    <collision>
+      <origin xyz="0.054 0.0315 0.054" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.00475" length="0.024"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="upper_deck_fixed" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <parent link="chassis"/>
+    <child link="upper_deck"/>
+  </joint>
+  <link name="aa_lid">
+    <inertial>
+      <origin xyz="-0.0025 -2.13590834e-19 0.0152" rpy="0 0 0"/>
+      <mass value="0.0253443107"/>
+      <inertia ixx="1.42358720144e-05" ixy="-5.5757118389e-23" ixz="-3.24798747897e-23" iyy="2.46714389835e-05" iyz="1.19634205475e-22" izz="3.88787564078e-05"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0.0165" rpy="3.14159265 0 0"/>
+      <geometry>
+        <mesh filename="V12_AA_Battery_Pocket_Cover.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="cover_blue"/>
+    </visual>
+    <collision>
+      <origin xyz="-0.0025 0 0.0152" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.107 0.08 0.0026"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="aa_lid_fixed" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <parent link="chassis"/>
+    <child link="aa_lid"/>
+  </joint>
+  <link name="powerbank_cradle">
+    <inertial>
+      <origin xyz="-0.000423340593 6.52540513e-10 -0.0157889269" rpy="0 0 0"/>
+      <mass value="0.0368898487"/>
+      <inertia ixx="3.60939612444e-05" ixy="9.21363275809e-14" ixz="-1.66353408261e-07" iyy="4.47970968328e-05" iyz="3.09276846336e-13" izz="7.85799743048e-05"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 -0.0116" rpy="3.14159265 0 0"/>
+      <geometry>
+        <mesh filename="V12_Powerbank_20mm_Open_End_Cradle.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="cradle_sand"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 -0.0101" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.11 0.088 0.003"/>
+      </geometry>
+    </collision>
+    <collision>
+      <origin xyz="-0.047 -0.042 0.00265" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.005" length="0.0225"/>
+      </geometry>
+    </collision>
+    <collision>
+      <origin xyz="-0.047 0.042 0.00265" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.005" length="0.0225"/>
+      </geometry>
+    </collision>
+    <collision>
+      <origin xyz="0.042 -0.042 0.00265" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.005" length="0.0225"/>
+      </geometry>
+    </collision>
+    <collision>
+      <origin xyz="0.042 0.042 0.00265" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.005" length="0.0225"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="powerbank_cradle_fixed" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <parent link="chassis"/>
+    <child link="powerbank_cradle"/>
+  </joint>
+  <link name="mcore">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.043"/>
+      <inertia ixx="2.35245833333e-05" ixy="0" ixz="0" iyy="3.0186e-05" iyz="0" izz="5.13885833333e-05"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.09 0.079 0.018"/>
+      </geometry>
+      <material name="mcore_blue"/>
+    </visual>
+  </link>
+  <joint name="mcore_fixed" type="fixed">
+    <origin xyz="0 0 0.054" rpy="0 0 0"/>
+    <parent link="chassis"/>
+    <child link="mcore"/>
+  </joint>
+  <link name="raspberry_pi_4">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.046"/>
+      <inertia ixx="1.28838333333e-05" ixy="0" ixz="0" iyy="2.85583333333e-05" iyz="0" izz="3.97171666667e-05"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.085 0.056 0.015"/>
+      </geometry>
+      <material name="pi_green"/>
+    </visual>
+  </link>
+  <joint name="raspberry_pi_4_fixed" type="fixed">
+    <origin xyz="0.018 0 0.079" rpy="0 0 0"/>
+    <parent link="chassis"/>
+    <child link="raspberry_pi_4"/>
+  </joint>
+  <link name="mpu6050_gy521">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.003"/>
+      <inertia ixx="6.8e-08" ixy="0" ixz="0" iyy="1.1425e-07" iyz="0" izz="1.7425e-07"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.021 0.016 0.004"/>
+      </geometry>
+      <material name="mpu_cyan"/>
+    </visual>
+  </link>
+  <joint name="mpu6050_gy521_fixed" type="fixed">
+    <origin xyz="-0.053 0 0.078" rpy="0 0 0"/>
+    <parent link="chassis"/>
+    <child link="mpu6050_gy521"/>
+  </joint>
+  <link name="aa_batteries_and_holder">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.121"/>
+      <inertia ixx="5.40970833333e-05" ixy="0" ixz="0" iyy="5.127375e-05" iyz="0" izz="9.88368333333e-05"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.069 0.071 0.018"/>
+      </geometry>
+      <material name="aa_black"/>
+    </visual>
+  </link>
+  <joint name="aa_batteries_and_holder_fixed" type="fixed">
+    <origin xyz="-0.007 0 0.0265" rpy="0 0 0"/>
+    <parent link="chassis"/>
+    <child link="aa_batteries_and_holder"/>
+  </joint>
+  <link name="pi_powerbank">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.2"/>
+      <inertia ixx="8.83333333333e-05" ixy="0" ixz="0" iyy="0.000173333333333" iyz="0" izz="0.000248333333333"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.1 0.07 0.02"/>
+      </geometry>
+      <material name="powerbank_black"/>
+    </visual>
+  </link>
+  <joint name="pi_powerbank_fixed" type="fixed">
+    <origin xyz="0 0 0.0014" rpy="0 0 0"/>
+    <parent link="chassis"/>
+    <child link="pi_powerbank"/>
+  </joint>
+  <link name="usb_cable_wires">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.02"/>
+      <inertia ixx="6.32666666667e-06" ixy="0" ixz="0" iyy="2.58666666667e-06" iyz="0" izz="4.59333333333e-06"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.016 0.05 0.036"/>
+      </geometry>
+      <material name="cable_grey"/>
+    </visual>
+  </link>
+  <joint name="usb_cable_wires_fixed" type="fixed">
+    <origin xyz="0.066 0 0.061" rpy="0 0 0"/>
+    <parent link="chassis"/>
+    <child link="usb_cable_wires"/>
+  </joint>
+  <link name="left_tt_motor">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.041"/>
+      <inertia ixx="6.7035e-06" ixy="0" ixz="0" iyy="7.33216666667e-06" iyz="0" izz="3.64216666667e-06"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.025 0.021 0.039"/>
+      </geometry>
+      <material name="tt_yellow"/>
+    </visual>
+  </link>
+  <joint name="left_tt_motor_fixed" type="fixed">
+    <origin xyz="0 0.069 0.01" rpy="0 0 0"/>
+    <parent link="chassis"/>
+    <child link="left_tt_motor"/>
+  </joint>
+  <link name="right_tt_motor">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.041"/>
+      <inertia ixx="6.7035e-06" ixy="0" ixz="0" iyy="7.33216666667e-06" iyz="0" izz="3.64216666667e-06"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.025 0.021 0.039"/>
+      </geometry>
+      <material name="tt_yellow"/>
+    </visual>
+  </link>
+  <joint name="right_tt_motor_fixed" type="fixed">
+    <origin xyz="0 -0.069 0.01" rpy="0 0 0"/>
+    <parent link="chassis"/>
+    <child link="right_tt_motor"/>
+  </joint>
   <link name="left_wheel">
     <inertial>
-      <mass value="0.1"/>
-      <inertia ixx="0.00002639" ixy="0" ixz="0" iyy="0.000045" iyz="0" izz="0.00002639"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.02"/>
+      <inertia ixx="5.04e-06" ixy="0" ixz="0" iyy="9e-06" iyz="0" izz="5.04e-06"/>
     </inertial>
-    <visual name="tire">
-      <origin rpy="1.57079632679 0 0"/>
-      <geometry><mesh filename="wheel.obj" scale="0.6 0.6 0.9"/></geometry>
-      <material name="rubber"/>
-    </visual>
-    <visual name="hub">
-      <origin rpy="1.57079632679 0 0"/>
-      <geometry><cylinder radius="0.0108" length="0.02205"/></geometry>
-      <material name="titanium"/>
+    <visual>
+      <origin xyz="0 0 0" rpy="1.57079633 0 0"/>
+      <geometry>
+        <cylinder radius="0.03" length="0.018"/>
+      </geometry>
+      <material name="wheel_black"/>
     </visual>
     <collision>
-      <origin rpy="1.57079632679 0 0"/>
-      <geometry><cylinder radius="0.03" length="0.0216"/></geometry>
+      <origin xyz="0 0 0" rpy="1.57079633 0 0"/>
+      <geometry>
+        <cylinder radius="0.03" length="0.018"/>
+      </geometry>
     </collision>
   </link>
-
-  <link name="right_wheel">
-    <inertial>
-      <mass value="0.1"/>
-      <inertia ixx="0.00002639" ixy="0" ixz="0" iyy="0.000045" iyz="0" izz="0.00002639"/>
-    </inertial>
-    <visual name="tire">
-      <origin rpy="1.57079632679 0 0"/>
-      <geometry><mesh filename="wheel.obj" scale="0.6 0.6 0.9"/></geometry>
-      <material name="rubber"/>
-    </visual>
-    <visual name="hub">
-      <origin rpy="1.57079632679 0 0"/>
-      <geometry><cylinder radius="0.0108" length="0.02205"/></geometry>
-      <material name="titanium"/>
-    </visual>
-    <collision>
-      <origin rpy="1.57079632679 0 0"/>
-      <geometry><cylinder radius="0.03" length="0.0216"/></geometry>
-    </collision>
-  </link>
-
-  <!-- Same joint names and order as your existing URDF. -->
   <joint name="left_wheel_joint" type="continuous">
-    <origin xyz="0 0.072 0"/>
+    <origin xyz="0 0.094 0" rpy="0 0 0"/>
     <parent link="chassis"/>
     <child link="left_wheel"/>
     <axis xyz="0 1 0"/>
+    <dynamics damping="0.003" friction="0.0"/>
+    <limit effort="0.4" velocity="40"/>
   </joint>
+  <link name="right_wheel">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.02"/>
+      <inertia ixx="5.04e-06" ixy="0" ixz="0" iyy="9e-06" iyz="0" izz="5.04e-06"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="1.57079633 0 0"/>
+      <geometry>
+        <cylinder radius="0.03" length="0.018"/>
+      </geometry>
+      <material name="wheel_black"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="1.57079633 0 0"/>
+      <geometry>
+        <cylinder radius="0.03" length="0.018"/>
+      </geometry>
+    </collision>
+  </link>
   <joint name="right_wheel_joint" type="continuous">
-    <origin xyz="0 -0.072 0"/>
+    <origin xyz="0 -0.094 0" rpy="0 0 0"/>
     <parent link="chassis"/>
     <child link="right_wheel"/>
     <axis xyz="0 1 0"/>
+    <dynamics damping="0.003" friction="0.0"/>
+    <limit effort="0.4" velocity="40"/>
   </joint>
 </robot>

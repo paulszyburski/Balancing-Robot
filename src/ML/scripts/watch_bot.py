@@ -1,3 +1,4 @@
+import argparse
 import time
 from math import degrees
 from pathlib import Path
@@ -9,8 +10,14 @@ from src.ML.env import Enviroment
 
 
 def main():
-    checkpoint = Path(__file__).resolve().parents[3] / "balancing_bot.zip"
-    model = PPO.load(checkpoint, device="cpu")
+    parser = argparse.ArgumentParser(description="Watch a balancing policy in simulation.")
+    parser.add_argument(
+        "--checkpoint",
+        type=Path,
+        default=Path(__file__).resolve().parents[3] / "balancing_bot.zip",
+    )
+    args = parser.parse_args()
+    model = PPO.load(args.checkpoint, device="cpu")
     env = Enviroment(gui=True)
 
     try:

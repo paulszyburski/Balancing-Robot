@@ -9,10 +9,12 @@ from .controller import DriveController
 
 
 class Enviroment(gym.Env):
-    def __init__(self, gui=True):
+    def __init__(self, gui=True, *, action_change_penalty=0.05):
         self.client = p.connect(p.GUI if gui else p.DIRECT)
         self.dt = 1 / 240
         self.steps = 0
+        self.action_change_penalty = action_change_penalty
+        self.previous_action = 0.0
 
         self.action_space = gym.spaces.Box(-1.0, 1.0, shape=(1,), dtype=np.float32)
         self.observation_space = gym.spaces.Box(-np.inf, np.inf, shape=(3,), dtype=np.float32)
@@ -60,10 +62,14 @@ class Enviroment(gym.Env):
             )
 
         self.steps = 0
+        self.previous_action = 0.0
         return self._observation(orientation), {}
 
     def step(self, action):
-        speed = 10.0 * float(action[0])
+        command = float(action[0])
+        action_change = command - self.previous_action
+        self.previous_action = command
+        speed = 10.0 * command
         self.controller.drive(speed)
 
         chassis_hit_floor = False
@@ -92,6 +98,7 @@ class Enviroment(gym.Env):
             - 0.03 * abs(pitch_rate)
             - 2.0 * abs(axle_x)
             - 0.25 * abs(forward_speed)
+            - self.action_change_penalty * action_change ** 2
         )
         reward = -1.0 if terminated else balance_reward
         info = {"fell": bool(fell), "drifted": bool(drifted)}
