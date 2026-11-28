@@ -36,12 +36,12 @@ class RobotSensors:
 
     def _read_imu(self):
         data = bytes(self.bus.read_i2c_block_data(0x68, 0x3B, 14))
-        # Forward/backward pitch is rotation about the IMU's Y axis.
-        # Use gravity projected onto X and Z to estimate the same angle.
-        accel_x = int.from_bytes(data[0:2], "big", signed=True)
+        # The mounting maps positive robot pitch to negative IMU X rotation.
+        # Use gravity projected onto IMU Y and Z to estimate the same angle.
+        accel_y = int.from_bytes(data[2:4], "big", signed=True)
         accel_z = int.from_bytes(data[4:6], "big", signed=True)
-        gyro_y = int.from_bytes(data[10:12], "big", signed=True)
-        return atan2(-accel_x, accel_z), radians(gyro_y / 131)
+        gyro_x = int.from_bytes(data[8:10], "big", signed=True)
+        return atan2(-accel_y, accel_z), radians(-gyro_x / 131)
 
     def observation(self):
         accel_pitch, gyro_rate = self._read_imu()
