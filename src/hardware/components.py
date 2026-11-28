@@ -36,6 +36,8 @@ class RobotSensors:
 
     def _read_imu(self):
         data = bytes(self.bus.read_i2c_block_data(0x68, 0x3B, 14))
+        # Forward/backward pitch is rotation about the IMU's Y axis.
+        # Use gravity projected onto X and Z to estimate the same angle.
         accel_x = int.from_bytes(data[0:2], "big", signed=True)
         accel_z = int.from_bytes(data[4:6], "big", signed=True)
         gyro_y = int.from_bytes(data[10:12], "big", signed=True)
